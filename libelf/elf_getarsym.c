@@ -163,7 +163,7 @@ elf_getarsym (Elf *elf, size_t *ptr)
 	  __libelf_seterrno (ELF_E_NO_INDEX);
 	  goto out;
 	}
-      int w = index64_p ? 8 : 4;
+      size_t w = index64_p ? 8 : 4;
 
       /* We have an archive.  The first word in there is the number of
 	 entries in the table.  */
@@ -188,7 +188,8 @@ elf_getarsym (Elf *elf, size_t *ptr)
 #if SIZE_MAX <= 4294967295U
 	  || n >= SIZE_MAX / sizeof (Elf_Arsym)
 #endif
-	  || n > index_size / w)
+	  || index_size < w
+	  || n > (index_size - w) / w)
 	{
 	  /* This index table cannot be right since it does not fit into
 	     the file.  */
