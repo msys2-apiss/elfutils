@@ -910,15 +910,18 @@ sysprof_find_dwfl (struct sysprof_unwind_info *sui,
     }
 
  reuse:
-  bool is_abi32 = (regs->abi == PERF_SAMPLE_REGS_ABI_32);
-  sui->last_sp = regs->regs[sp_reg_index(default_ebl, is_abi32)];
-  sui->last_base = sui->last_sp;
+  {
+    bool is_abi32 = (regs->abi == PERF_SAMPLE_REGS_ABI_32);
+    sui->last_sp = regs->regs[sp_reg_index(default_ebl, is_abi32)];
+    sui->last_base = sui->last_sp;
 
-  if (show_frames) {
-    fprintf(stderr, "sysprof_find_dwfl pid %lld%s: size=%ld%s pc=%lx sp=%lx+(%lx)\n",
-	    (long long) pid, cached ? " (cached)" : "",
-	    ev->size, is_abi32 ? " (32-bit)" : "",
-	    regs->regs[8], sui->last_base, (long)0);
+    if (show_frames) {
+      fprintf(stderr,
+	      "sysprof_find_dwfl pid %lld%s: size=%ld%s pc=%lx sp=%lx+(%lx)\n",
+	      (long long) pid, cached ? " (cached)" : "",
+	      ev->size, is_abi32 ? " (32-bit)" : "",
+	      regs->regs[8], sui->last_base, (long)0);
+    }
   }
 
   if (!cached)
